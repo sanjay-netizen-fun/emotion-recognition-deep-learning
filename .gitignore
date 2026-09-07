@@ -1,0 +1,21 @@
+﻿node_modules/
+.env
+
+# PyInstaller output
+/dist/
+
+# Python virtual environment
+venv/
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+
+# Dataset
+/images/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Built Windows installer
+/installer/
