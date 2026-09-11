@@ -211,7 +211,7 @@ It can serve as a foundation for further development in **AI, computer vision, a
 
 ## 👨‍💻 Author
 
-**Sanjay**
+*Sanjay*
 
 Developed as a deep learning and computer vision project.
 
