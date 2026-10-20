@@ -65,7 +65,7 @@ Open <http://localhost:8000>, click **Start camera** (or drop an image onto the 
 python realtimedetection.py
 ```
 
-Requires a working webcam. On Windows the app opens the camera with DirectShow; other platforms fall back to the default backend.
+Requires a working webcam. On Windows the app opens the camera with DirectShow; other platforms fall back to the default backend. On Linux you also need the Tk bindings (`sudo apt install python3-tk`).
 
 ### Option C — evaluate the model
 
@@ -230,6 +230,13 @@ Output: `dist/Emotion Recognition/Emotion Recognition.exe`. An Inno Setup script
 ## 🔐 Repository management
 
 `images/`, `runs/`, `dist/`, `installer/`, `venv/`, caches and test artefacts are excluded via `.gitignore`. Generated evaluation reports (`docs/evaluation.md`) are small and committed on purpose.
+
+## ⚠️ Limitations & responsible use
+
+* The model was trained on FER-2013, a small, heavily cropped, largely Western dataset. Accuracy varies by age, skin tone, lighting, occlusion and culture; the reported 63.6% is not a guarantee of real-world performance.
+* Facial expression is not the same as internal emotional state. Predictions are noisy and should not be treated as ground truth.
+* Do not use this project for surveillance, hiring, policing, medical or any other high-stakes decision. If you deploy it, obtain consent from people in front of the camera and disclose that inference is running.
+* The web demo sends frames to the server process you run — they are processed in memory and not written to disk, but they do leave the browser. Camera access requires HTTPS or `localhost`.
 
 ## 🚀 Future improvements
 
