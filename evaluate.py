@@ -190,7 +190,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {error}", file=sys.stderr)
         return 2
 
-    detector = FaceDetector() if args.detect else None
+    detector = None
+    if args.detect:
+        try:
+            detector = FaceDetector()
+        except (FileNotFoundError, ValueError) as error:
+            print(f"error: face detection unavailable: {error}", file=sys.stderr)
+            return 2
     fallback = not args.no_fallback
 
     y_true: list[int] = []
@@ -198,7 +204,7 @@ def main(argv: list[str] | None = None) -> int:
     all_scores: list[np.ndarray] = []
     predictions: list[dict] = []
     skipped: list[dict] = []
-    detected_faces = 0
+    images_with_faces = 0
     used_fallback = 0
 
     started = time.perf_counter()
@@ -250,13 +256,14 @@ def main(argv: list[str] | None = None) -> int:
                 boxes = np.empty((0, 4), dtype=np.int32)
                 fallback_used = True
             else:
-                detected_faces += 1
+                images_with_faces += 1
         else:
             boxes = np.empty((0, 4), dtype=np.int32)
 
         if fallback_used or len(boxes) == 0:
             face = image
-            used_fallback += 1
+            if detector is not None:
+                used_fallback += 1
         else:
             # Evaluate on the largest detected face.
             areas = boxes[:, 2] * boxes[:, 3]
@@ -288,7 +295,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"throughput    : {len(y_true) / elapsed:.1f} images/s ({elapsed:.1f}s total)")
 
     if detector is not None:
-        print(f"faces detected: {detected_faces}/{len(y_true) + len(skipped)}")
+        print(f"faces detected: {images_with_faces}/{len(y_true) + len(skipped)} image(s)")
         if used_fallback:
             print(f"whole-frame   : {used_fallback} image(s) had no detected face")
 

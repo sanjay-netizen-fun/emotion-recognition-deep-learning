@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import os
 import sys
+import threading
 from pathlib import Path
 
 import cv2
@@ -82,6 +83,7 @@ class FaceDetector:
         self._cascade = cv2.CascadeClassifier(str(path))
         if self._cascade.empty():
             raise ValueError(f"failed to load Haar cascade from {path}")
+        self._lock = threading.Lock()
 
     def detect(self, image: np.ndarray | object) -> np.ndarray:
         """Detect faces and return an ``(N, 4)`` int array of ``x, y, w, h`` boxes.
@@ -90,12 +92,13 @@ class FaceDetector:
         same order.
         """
         gray = to_gray(image)
-        faces = self._cascade.detectMultiScale(
-            gray,
-            scaleFactor=self.scale_factor,
-            minNeighbors=self.min_neighbors,
-            minSize=self.min_size,
-        )
+        with self._lock:
+            faces = self._cascade.detectMultiScale(
+                gray,
+                scaleFactor=self.scale_factor,
+                minNeighbors=self.min_neighbors,
+                minSize=self.min_size,
+            )
 
         if len(faces) == 0:
             return np.empty((0, 4), dtype=np.int32)

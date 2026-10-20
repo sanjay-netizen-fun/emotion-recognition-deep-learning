@@ -472,10 +472,15 @@
         return;
       }
       if (!state.warm) setBadge("Loading model…");
-      await analyzeBlob(blob, {
+      const result = await analyzeBlob(blob, {
         mirrored,
         intrinsic: { width: els.video.videoWidth, height: els.video.videoHeight },
       });
+      if (!state.running) {
+        // The camera was stopped while this frame was in flight; drop the result.
+        clearOverlay();
+        return result;
+      }
       setBadge(null);
       setStatus("live", "Camera live");
     } catch (error) {
@@ -507,6 +512,7 @@
     }
 
     stopCamera();
+    els.statFps.textContent = "—";
     state.lastImageFile = file;
     state.mode = "image";
     setStatus("busy", "Analysing image");
