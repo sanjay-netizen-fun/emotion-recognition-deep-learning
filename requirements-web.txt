@@ -1,0 +1,3 @@
+# Web demo dependencies (includes the core runtime).
+-r requires.txt
+flask>=3.0

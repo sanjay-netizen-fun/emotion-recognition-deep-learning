@@ -1,9 +1,7 @@
-tensorflow
-keras
-pandas
-numpy
-jupyter
-notebook
-tqdm
-opencv-python
-scikit-learn
+# Runtime dependencies for the desktop app, evaluation and training.
+tensorflow>=2.15
+keras>=3.0
+numpy>=1.26
+opencv-python>=4.9,<5
+customtkinter>=5.2
+pillow>=10.0

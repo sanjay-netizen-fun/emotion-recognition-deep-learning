@@ -1,11 +1,21 @@
 import os
 import sys
-import cv2
 import time
-import customtkinter as ctk
-from PIL import Image, ImageTk
-from keras.models import model_from_json
-import numpy as np
+
+import cv2
+
+try:
+    import customtkinter as ctk
+    from PIL import Image, ImageTk
+except ImportError as error:  # pragma: no cover - depends on the local Tk install
+    raise SystemExit(
+        "The desktop app requires customtkinter, Pillow and the Tk bindings "
+        "(python3-tk on Debian/Ubuntu). Install them with: pip install -r requires.txt\n"
+        f"Original error: {error}"
+    ) from error
+
+from emotion_recognition import EMOTIONS, load_keras_model, preprocess_face
+from emotion_recognition.detection import FaceDetector, crop_box
 
 
 def resource_path(filename):
@@ -14,30 +24,16 @@ def resource_path(filename):
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
 
 
-with open(resource_path("emotiondetector.json"), "r") as json_file:
-    model_json = json_file.read()
+model = load_keras_model(resource_path("emotiondetector.keras"))
 
-model = model_from_json(model_json)
-model.load_weights(resource_path("emotiondetector.keras"))
+face_cascade = FaceDetector(scale_factor=1.3, min_neighbors=5)
 
-haar_file = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
-face_cascade = cv2.CascadeClassifier(haar_file)
-
-labels = {
-    0: "Angry",
-    1: "Disgust",
-    2: "Fear",
-    3: "Happy",
-    4: "Neutral",
-    5: "Sad",
-    6: "Surprise"
-}
+labels = {index: name for index, name in enumerate(EMOTIONS)}
 
 
 def extract_features(image):
-    feature = np.array(image)
-    feature = feature.reshape(1, 48, 48, 1)
-    return feature / 255.0
+    """Return a (1, 48, 48, 1) normalized batch for one face crop."""
+    return preprocess_face(image).reshape(1, 48, 48, 1)
 
 
 class EmotionApp:
@@ -219,7 +215,8 @@ class EmotionApp:
         if self.running:
             return
 
-        self.webcam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        backend = cv2.CAP_DSHOW if sys.platform.startswith("win") else cv2.CAP_ANY
+        self.webcam = cv2.VideoCapture(0, backend)
 
         if not self.webcam.isOpened():
             self.status.configure(
@@ -278,18 +275,13 @@ class EmotionApp:
         frame = cv2.flip(frame, 1)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        faces = face_cascade.detectMultiScale(
-            gray,
-            scaleFactor=1.3,
-            minNeighbors=5
-        )
+        faces = face_cascade.detect(gray)
 
         emotion = "No face"
         confidence = 0
 
         for (x, y, w, h) in faces:
-            face = gray[y:y + h, x:x + w]
-            face = cv2.resize(face, (48, 48))
+            face = crop_box(gray, (x, y, w, h))
 
             prediction = model.predict(
                 extract_features(face),
