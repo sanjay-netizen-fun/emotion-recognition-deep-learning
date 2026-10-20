@@ -4,7 +4,7 @@ Supports the layout used by ``trainmodel.ipynb``::
 
     images/
       train/<emotion>/*.jpg
-      test/<emotion>/*.jpg
+      validation/<emotion>/*.jpg   (test/ is accepted too)
 
 as well as a flat, single-split layout::
 
@@ -26,7 +26,7 @@ from .labels import FOLDER_TO_LABEL, index_for_label
 IMAGE_EXTENSIONS = frozenset(
     {".jpg", ".jpeg", ".png", ".bmp", ".webp", ".pgm", ".tif", ".tiff"}
 )
-SPLIT_NAMES = ("train", "test")
+SPLIT_NAMES = ("train", "validation", "test")
 
 
 @dataclass(frozen=True)
@@ -57,7 +57,8 @@ def resolve_split_dir(root: str | Path, split: str | None = None) -> Path:
 
     Args:
         root: dataset root, or a directory with ``train``/``test`` children.
-        split: ``"train"`` or ``"test"`` when ``root`` uses the split layout.
+        split: ``"train"``, ``"validation"`` or ``"test"`` when ``root`` uses the
+            split layout.
     """
     directory = Path(root)
     if not directory.is_dir():

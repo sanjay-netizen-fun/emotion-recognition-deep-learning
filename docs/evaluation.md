@@ -1,6 +1,6 @@
 # Evaluation report
 
-- **Dataset:** `images/validation`
+- **Dataset:** `images` (split: `validation`)
 - **Images evaluated:** 3589
 - **Model:** `emotiondetector.keras`
 - **Face detection:** none (whole image)
@@ -9,7 +9,7 @@
 - **Macro F1:** 0.617
 - **Weighted F1:** 0.607
 - **Top-2 accuracy:** 80.61%
-- **Throughput:** 451 images/s (CPU)
+- **Throughput:** 460 images/s (CPU)
 
 ## Per-class metrics
 

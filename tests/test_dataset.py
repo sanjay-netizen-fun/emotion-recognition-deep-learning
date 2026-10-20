@@ -81,3 +81,26 @@ def test_invalid_limit(dataset_root):
 def test_split_on_flat_layout_is_rejected(dataset_root):
     with pytest.raises(ValueError, match="single split"):
         resolve_split_dir(dataset_root / "test", "train")
+
+
+def test_validation_split_is_recognized(tmp_path):
+    from PIL import Image
+
+    import numpy as np
+
+    folder = tmp_path / "images" / "validation" / "Happy"
+    folder.mkdir(parents=True)
+    Image.fromarray(np.zeros((48, 48), dtype=np.uint8), mode="L").save(folder / "0.png")
+
+    assert available_splits(tmp_path / "images") == ["validation"]
+    assert [sample.label for sample in scan_dataset(tmp_path / "images", split="validation")] == ["Happy"]
+    # A single split can also be resolved without passing --split.
+    assert [sample.label for sample in scan_dataset(tmp_path / "images")] == ["Happy"]
+
+    sad = tmp_path / "images" / "test" / "Sad"
+    sad.mkdir(parents=True)
+    Image.fromarray(np.zeros((48, 48), dtype=np.uint8), mode="L").save(sad / "0.png")
+
+    assert available_splits(tmp_path / "images") == ["validation", "test"]
+    with pytest.raises(ValueError, match="contains splits"):
+        scan_dataset(tmp_path / "images")

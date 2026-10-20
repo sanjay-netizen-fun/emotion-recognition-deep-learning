@@ -60,8 +60,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--split",
         default=None,
-        choices=["train", "test"],
-        help="which split to evaluate when the dataset root contains train/ and test/",
+        choices=["train", "validation", "test"],
+        help="which split to evaluate when the dataset root contains train/, validation/ or test/",
     )
     parser.add_argument(
         "--model",

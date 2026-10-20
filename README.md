@@ -13,7 +13,7 @@ The model detects a face in a webcam frame, crops it, converts it to a 48×48 gr
 | **Evaluation** | `evaluate.py` — accuracy, per-class precision/recall/F1, top-2 accuracy, confusion matrix, JSON/CSV/Markdown reports |
 | **Training** | `train.py` — reproduces the shipped CNN from a folder-per-class dataset |
 | **Core package** | `emotion_recognition/` — shared preprocessing, labels, detection, model wrapper and metrics |
-| **Tests** | `tests/` — 97 pytest tests (fast unit tests + opt-in model/dataset integration tests) |
+| **Tests** | `tests/` — 98 pytest tests (fast unit tests + opt-in model/dataset integration tests) |
 | **Model** | `emotiondetector.keras` (8.46M params) and `emotiondetector.json` architecture |
 
 ## 😊 Supported emotions
@@ -70,7 +70,7 @@ Requires a working webcam. On Windows the app opens the camera with DirectShow; 
 ### Option C — evaluate the model
 
 ```bash
-python evaluate.py --data images/validation --markdown docs/evaluation.md
+python evaluate.py --data images --split validation --markdown docs/evaluation.md
 ```
 
 ### Option D — train from scratch
@@ -103,7 +103,7 @@ Key observations:
 Regenerate the report at any time:
 
 ```bash
-python evaluate.py --data images/validation \
+python evaluate.py --data images --split validation \
     --json runs/eval.json --csv runs/predictions.csv --markdown docs/evaluation.md
 ```
 
