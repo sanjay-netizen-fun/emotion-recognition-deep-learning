@@ -84,9 +84,8 @@ def test_split_on_flat_layout_is_rejected(dataset_root):
 
 
 def test_validation_split_is_recognized(tmp_path):
-    from PIL import Image
-
     import numpy as np
+    from PIL import Image
 
     folder = tmp_path / "images" / "validation" / "Happy"
     folder.mkdir(parents=True)
