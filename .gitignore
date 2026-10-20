@@ -1,4 +1,4 @@
-﻿node_modules/
+node_modules/
 .env
 
 # PyInstaller output
@@ -6,16 +6,25 @@
 
 # Python virtual environment
 venv/
+.venv/
 
 # Jupyter temporary files
 .ipynb_checkpoints/
 
-# Dataset
+# Dataset (see README for the expected folder layout)
 /images/
 
-# Python cache
+# Python caches and test artefacts
 __pycache__/
 *.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Evaluation / training artefacts
+/runs/
+*.training.json
 
 # Built Windows installer
 /installer/
